@@ -4,22 +4,30 @@ import brands from '../data/brands';
 import models from '../data/models';
 import Table from './table';
 import stringifyProps from '../helpers/stringify-props';
+import SelectField from './selectField';
 
 class App {
   private htmlElement: HTMLElement;
 
   private carsCollection: CarsCollection;
 
+  private brandSelect: SelectField;
+
   public constructor(selector: string) {
     const foundElement = document.querySelector<HTMLElement>(selector);
 
-    if (foundElement === null) throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
+    if (foundElement === null) throw new Error(`Can't find element with selector '${selector}'`);
 
     this.htmlElement = foundElement;
     this.carsCollection = new CarsCollection({
       cars,
       brands,
       models,
+    });
+
+    this.brandSelect = new SelectField({
+      labelText: 'Brand',
+      options: brands.map(({ id, title }) => ({ title, value: id })),
     });
   }
 
@@ -38,7 +46,7 @@ class App {
 
     const container = document.createElement('div');
     container.className = 'container my-5';
-    container.appendChild(carTable.htmlElement);
+    container.append(this.brandSelect.htmlElement, carTable.htmlElement);
 
     this.htmlElement.append(container);
   };
