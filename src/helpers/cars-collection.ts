@@ -38,7 +38,6 @@ class CarsCollection {
         const brandModelsIds = models
             .filter((model) => model.brandId === brandId)
             .map((model) => model.id);
-        console.log(brandModelsIds);
 
         return cars
             .filter((car) => brandModelsIds.includes(car.modelId))

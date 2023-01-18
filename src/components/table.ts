@@ -14,9 +14,9 @@ class Table<T extends TableRowData> {
 
     private props: TableProps<T>;
 
-    private tbody: HTMLTableSectionElement;
+    private readonly tbody: HTMLTableSectionElement;
 
-    private thead: HTMLTableSectionElement;
+    private readonly thead: HTMLTableSectionElement;
 
     public constructor(props: TableProps<T>) {
         this.props = props;
@@ -24,9 +24,18 @@ class Table<T extends TableRowData> {
         this.tbody = document.createElement('tbody');
         this.thead = document.createElement('thead');
         this.initialize();
+        this.renderView();
     }
 
-    public initializeHead = (): void => {
+    public initialize = () => {
+        this.htmlElement.className = 'table table-striped';
+        this.htmlElement.append(
+            this.thead,
+            this.tbody,
+        );
+    };
+
+    private renderHeadView = () => {
         const columnsNames = Object.values(this.props.columns);
         const columnsHtmlStr = columnsNames
             .map((name) => `<th>${name}</th>`)
@@ -39,7 +48,8 @@ class Table<T extends TableRowData> {
           `;
     };
 
-    public initializeBody = (): void => {
+    private renderBodyView = () => {
+        this.tbody.innerHTML = '';
         const keys = Object.keys(this.props.columns);
         this.props.rowsData.forEach((rowData) => {
             const columnsHtmlStr = keys
@@ -50,15 +60,18 @@ class Table<T extends TableRowData> {
         });
     };
 
-    public initialize = () => {
-        this.initializeHead();
-        this.initializeBody();
+    private renderView = () => {
+        this.renderHeadView();
+        this.renderBodyView();
+    };
 
-        this.htmlElement.className = 'table table-striped';
-        this.htmlElement.append(
-            this.thead,
-            this.tbody,
-        );
+    public updateProps = (newProps: Partial<TableProps<T>>) => {
+        this.props = {
+            ...this.props,
+            ...newProps,
+        };
+
+        this.renderView();
     };
 }
 

@@ -6,12 +6,13 @@ import Table from './table';
 import stringifyProps from '../helpers/stringify-props';
 import SelectField from './selectField';
 
+const ALL_BRANDS_ID = '';
+const ALL_BRANDS_TITLE = 'All Cars';
+
 class App {
   private htmlElement: HTMLElement;
 
   private carsCollection: CarsCollection;
-
-  private brandSelect: SelectField;
 
   public constructor(selector: string) {
     const foundElement = document.querySelector<HTMLElement>(selector);
@@ -24,18 +25,11 @@ class App {
       brands,
       models,
     });
-
-    this.brandSelect = new SelectField({
-      labelText: 'Brand',
-      options: brands.map(({ id, title }) => ({ title, value: id })),
-      onChange: (_, brandId) => {
-        const newcars = this.carsCollection.getByBrandId(brandId);
-        console.log(newcars);
-      },
-    });
   }
 
   public initialize = (): void => {
+    const container = document.createElement('div');
+    container.className = 'container my-5';
     const carTable = new Table({
       title: 'All Cars',
       columns: {
@@ -48,9 +42,24 @@ class App {
       rowsData: this.carsCollection.all.map(stringifyProps),
     });
 
-    const container = document.createElement('div');
-    container.className = 'container my-5';
-    container.append(this.brandSelect.htmlElement, carTable.htmlElement);
+    const selectField = new SelectField({
+      options: [
+        { title: ALL_BRANDS_TITLE, value: ALL_BRANDS_ID },
+        ...brands.map(({ id, title }) => ({ title, value: id })),
+      ],
+      onChange: (_, brandId, { title: brandTitle }) => {
+        const selectedCars = brandId === ALL_BRANDS_ID
+            ? this.carsCollection.all
+            : this.carsCollection.getByBrandId(brandId);
+
+        carTable.updateProps({
+          rowsData: selectedCars.map(stringifyProps),
+          title: brandTitle,
+        });
+      },
+    });
+
+    container.append(selectField.htmlElement, carTable.htmlElement);
 
     this.htmlElement.append(container);
   };
