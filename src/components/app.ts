@@ -28,6 +28,10 @@ class App {
     this.brandSelect = new SelectField({
       labelText: 'Brand',
       options: brands.map(({ id, title }) => ({ title, value: id })),
+      onChange: (_, brandId) => {
+        const newcars = this.carsCollection.getByBrandId(brandId);
+        console.log(newcars);
+      },
     });
   }
 
