@@ -7,6 +7,7 @@ type TableProps<Type extends TableRowData> = {
     title: string,
     columns: Type,
     rowsData: Type[],
+    onDelete: (id: string) => void,
 };
 
 class Table<T extends TableRowData> {
@@ -52,11 +53,22 @@ class Table<T extends TableRowData> {
         this.tbody.innerHTML = '';
         const keys = Object.keys(this.props.columns);
         this.props.rowsData.forEach((rowData) => {
-            const columnsHtmlStr = keys
+            const tr = document.createElement('tr');
+            tr.innerHTML = keys
                 .map((key) => `<td>${rowData[key]}</td>`)
                 .join('');
 
-            this.tbody.innerHTML += `<tr>${columnsHtmlStr}</tr>`;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-danger btn-sm';
+            deleteBtn.innerText = '💩';
+            deleteBtn.addEventListener('click', () => {
+                this.props.onDelete(rowData.id);
+            });
+
+            const lastTd = document.createElement('td');
+            lastTd.append(deleteBtn);
+            tr.append(lastTd);
+            this.tbody.append(tr);
         });
     };
 

@@ -17,7 +17,7 @@ class App {
 
   private brandSelect: SelectField;
 
-  private selectedBrandId: null | string;
+  private selectedBrandId: string;
 
   private carTable: Table<StringifyObjectProps<CarJoined>>;
 
@@ -43,6 +43,7 @@ class App {
         year: 'Year',
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
+      onDelete: this.handleCarDelete,
     });
 
     this.brandSelect = new SelectField({
@@ -53,7 +54,7 @@ class App {
       onChange: this.handleBrandChange,
     });
 
-    this.selectedBrandId = null;
+    this.selectedBrandId = ALL_BRANDS_ID;
 
     this.initialize();
   }
@@ -74,10 +75,16 @@ class App {
     this.update();
   };
 
+  private handleCarDelete = (carId: string): void => {
+    this.carsCollection.deleteCarById(carId);
+
+    this.update();
+  };
+
   private update = (): void => {
     const { selectedBrandId, carsCollection } = this;
 
-    if (selectedBrandId === null) {
+    if (selectedBrandId === ALL_BRANDS_ID) {
       this.carTable.updateProps({
         title: 'All Cars',
         rowsData: carsCollection.all.map(stringifyProps),
