@@ -1,4 +1,4 @@
-import CarsCollection from '../helpers/cars-collection';
+import CarsCollection, { type CarProps } from '../helpers/cars-collection';
 import cars from '../data/cars';
 import brands from '../data/brands';
 import models from '../data/models';
@@ -6,7 +6,7 @@ import Table from './table';
 import stringifyProps, { StringifyObjectProps } from '../helpers/stringify-props';
 import SelectField, { Option } from './select-field';
 import CarJoined from '../types/car-joined';
-import CarForm from './car-form';
+import CarForm, { type Values } from './car-form';
 
 const ALL_BRANDS_ID = '';
 const ALL_BRANDS_TITLE = 'All Cars';
@@ -99,6 +99,24 @@ class App {
     }
   };
 
+  private handleCarCreate = ({
+                               brand,
+                               model,
+                               price,
+                               year,
+                             }: Values): void => {
+      const carProps: CarProps = {
+        brandId: brand,
+        modelId: model,
+        price: Number(price),
+        year: Number(year),
+    };
+
+    this.carsCollection.add(carProps);
+
+    this.update();
+  };
+
   public initialize = (): void => {
     const container = document.createElement('div');
     const addFormContainer = document.createElement('div');
@@ -113,7 +131,7 @@ class App {
         price: '',
         year: '',
       },
-      onSubmit: (formValues) => console.log(formValues),
+      onSubmit: this.handleCarCreate,
     });
 
     addFormContainer.append(

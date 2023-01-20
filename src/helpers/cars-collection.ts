@@ -3,10 +3,33 @@ import type Model from '../types/model';
 import type Brand from '../types/brand';
 import CarJoined from '../types/car-joined';
 
+export type CarProps = {
+    brandId: string,
+    modelId: string,
+    price: number,
+    year: number
+};
+
 type CarsCollectionProps = {
     cars: Car[],
     models: Model[],
     brands: Brand[],
+};
+
+const generateId = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id = '';
+    const sections = [8, 4, 4, 4, 12];
+
+    for (let i = 0; i < sections.length; i += 1) {
+        for (let j = 0; j < sections[i]; j += 1) {
+            id += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        if (i < sections.length - 1) {
+            id += '-';
+        }
+    }
+    return id;
 };
 
 class CarsCollection {
@@ -46,6 +69,24 @@ class CarsCollection {
 
     public deleteCarById = (carId: string): void => {
         this.props.cars = this.props.cars.filter((car) => car.id !== carId);
+    };
+
+    public add = ({ modelId, brandId, ...carProps }: CarProps): void => {
+        const { models, brands, cars } = this.props;
+        const model = models.find((m) => m.id === modelId);
+        const brand = brands.find((b) => b.id === brandId);
+
+        if (!model || !brand) {
+            throw new Error('Wrong data to create car');
+        }
+
+        const newCar: Car = {
+            id: generateId(),
+            ...carProps,
+            modelId,
+        };
+
+        cars.push(newCar);
     };
 }
 

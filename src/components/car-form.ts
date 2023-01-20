@@ -1,7 +1,9 @@
 import TextField from './text-field';
 import SelectField from './select-field';
+import brands from '../data/brands';
+import models from '../data/models';
 
-type Values = {
+export type Values = {
     brand: string,
     model: string,
     price: string,
@@ -40,26 +42,13 @@ class CarForm {
         this.brandSelectField = new SelectField({
             titleText: 'Brand',
             name: 'brand',
-            options: [
-                { title: 'Opel', value: '1' },
-                { title: 'BMW', value: '2' },
-                { title: 'Subaru', value: '3' },
-            ],
+            options:
+                brands.map(({ id, title }) => ({ title, value: id })),
         });
         this.modelSelectField = new SelectField({
             titleText: 'Model',
             name: 'model',
-            options: [
-                { title: 'a', value: '1' },
-                { title: 'Astra', value: '2' },
-                { title: 'Insignia', value: '3' },
-                { title: 'X1', value: '4' },
-                { title: 'X2', value: '5' },
-                { title: 'X3', value: '6' },
-                { title: 'Impreza', value: '7' },
-                { title: 'Forester', value: '8' },
-                { title: 'Ascent', value: '9' },
-            ],
+            options: models.map(({ id, title }) => ({ title, value: id })),
         });
         this.priceTextField = new TextField({
             labelText: 'Price',
@@ -95,6 +84,7 @@ class CarForm {
         };
 
         this.props.onSubmit(formValues);
+        this.htmlElement.reset();
     };
 
     private initialize = () => {
