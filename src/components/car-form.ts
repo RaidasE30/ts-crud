@@ -1,46 +1,133 @@
+import TextField from './text-field';
+import SelectField from './select-field';
+
+type Values = {
+    brand: string,
+    model: string,
+    price: string,
+    year: string,
+};
+
+type CarFormProps = {
+    values: Values,
+    title: string,
+    submitBtnText: string,
+    onSubmit: (values: Values) => void,
+};
+
 class CarForm {
     public htmlElement: HTMLFormElement;
 
-    constructor() {
+    private readonly formTitleHtmlElement: HTMLHeadingElement;
+
+    private readonly submitButton: HTMLButtonElement;
+
+    private brandSelectField: SelectField;
+
+    private modelSelectField: SelectField;
+
+    private priceTextField: TextField;
+
+    private yearTextField: TextField;
+
+    private props: CarFormProps;
+
+    constructor(props: CarFormProps) {
+        this.props = props;
         this.htmlElement = document.createElement('form');
+        this.formTitleHtmlElement = document.createElement('h2');
+        this.submitButton = document.createElement('button');
+        this.brandSelectField = new SelectField({
+            titleText: 'Brand',
+            name: 'brand',
+            options: [
+                { title: 'Opel', value: '1' },
+                { title: 'BMW', value: '2' },
+                { title: 'Subaru', value: '3' },
+            ],
+        });
+        this.modelSelectField = new SelectField({
+            titleText: 'Model',
+            name: 'model',
+            options: [
+                { title: 'a', value: '1' },
+                { title: 'Astra', value: '2' },
+                { title: 'Insignia', value: '3' },
+                { title: 'X1', value: '4' },
+                { title: 'X2', value: '5' },
+                { title: 'X3', value: '6' },
+                { title: 'Impreza', value: '7' },
+                { title: 'Forester', value: '8' },
+                { title: 'Ascent', value: '9' },
+            ],
+        });
+        this.priceTextField = new TextField({
+            labelText: 'Price',
+            name: 'price',
+        });
+        this.yearTextField = new TextField({
+            labelText: 'Year',
+            name: 'year',
+        });
         this.initialize();
+        this.renderView();
     }
 
-    public initialize = () => {
+    private handleSubmit = (event: SubmitEvent) => {
+        event.preventDefault();
+
+        const formData = new FormData(this.htmlElement);
+
+        const brand = formData.get('brand') as string | null;
+        const model = formData.get('model') as string | null;
+        const price = formData.get('price') as string | null;
+        const year = formData.get('year') as string | null;
+
+        if (!(brand && price && model && year)) {
+            throw new Error('Wrong data in form');
+        }
+
+        const formValues: Values = {
+            brand,
+            model,
+            price,
+            year,
+        };
+
+        this.props.onSubmit(formValues);
+    };
+
+    private initialize = () => {
+        this.formTitleHtmlElement.className = 'h3 text-center';
+        this.formTitleHtmlElement.innerText = 'Add New Car';
+        this.submitButton.className = 'btn btn-primary';
+        this.submitButton.innerText = 'Add';
+        this.submitButton.setAttribute('type', 'submit');
         this.htmlElement.className = 'card d-flex flex-column gap-3 p-3';
         this.htmlElement.style.width = '450px';
-        this.htmlElement.innerHTML = `<h2 class="h3 text-center">Add New Car</h2>
-    <div class="d-flex flex-column gap-2">
-      <div class="form-group">
-        <label for="select-2">Brand</label>
-        <select class="form-select" id="select-2" name="brand">
-          <option value="1">Opel</option>
-          <option value="2">BMW</option>
-          <option value="3">Subaru</option></select>
-      </div>
-      <div class="form-group">
-        <label for="select-3">Model</label>
-        <select class="form-select" id="select-3" name="model">
-          <option value="1">Zafira</option><option value="2">Astra</option>
-          <option value="3">Insignia</option>
-          <option value="4">X1</option>
-          <option value="5">X2</option>
-          <option value="6">X3</option>
-          <option value="7">Impreza</option>
-          <option value="8">Forester</option>
-          <option value="9">Ascent</option>
-        </select>
-      </div>
-      <div>
-        <label for="input-TextField-1" class="form-label">Price</label>
-        <input id="input-TextField-1" class="form-control" type="text" name="price">
-      </div>
-      <div>
-        <label for="input-TextField-2" class="form-label">Year</label>
-        <input id="input-TextField-2" class="form-control" type="text" name="year">
-      </div>
-    </div>
-     <button class="btn btn-primary">Add</button>`;
+        this.htmlElement.append(
+            this.formTitleHtmlElement,
+            this.brandSelectField.htmlElement,
+            this.modelSelectField.htmlElement,
+            this.priceTextField.htmlElement,
+            this.yearTextField.htmlElement,
+            this.submitButton,
+        );
+        this.htmlElement.addEventListener('submit', this.handleSubmit);
+    };
+
+    private renderView = () => {
+        this.formTitleHtmlElement.innerText = this.props.title;
+        this.submitButton.innerText = this.props.submitBtnText;
+    };
+
+    public updateProps = (newProps: Partial<CarFormProps>) => {
+        this.props = {
+            ...this.props,
+            ...newProps,
+        };
+
+        this.renderView();
     };
 }
 

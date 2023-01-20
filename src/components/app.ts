@@ -104,7 +104,17 @@ class App {
     const addFormContainer = document.createElement('div');
     addFormContainer.className = 'd-flex justify-content-center gap-4 align-items-start';
 
-    const carForm = new CarForm();
+    const carForm = new CarForm({
+      title: 'Add New Car',
+      submitBtnText: 'Add',
+      values: {
+        brand: '',
+        model: '',
+        price: '',
+        year: '',
+      },
+      onSubmit: (formValues) => console.log(formValues),
+    });
 
     addFormContainer.append(
         this.carTable.htmlElement,

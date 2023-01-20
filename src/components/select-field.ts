@@ -4,6 +4,7 @@ export type Option = {
 };
 
 export type SelectFieldProps = {
+    titleText?: string
     options: Option[],
     onChange?: (event: Event, value: string, option: Option) => void
     name?: string,
