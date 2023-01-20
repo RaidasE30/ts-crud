@@ -6,6 +6,7 @@ import Table from './table';
 import stringifyProps, { StringifyObjectProps } from '../helpers/stringify-props';
 import SelectField, { Option } from './select-field';
 import CarJoined from '../types/car-joined';
+import CarForm from './car-form';
 
 const ALL_BRANDS_ID = '';
 const ALL_BRANDS_TITLE = 'All Cars';
@@ -55,8 +56,6 @@ class App {
     });
 
     this.selectedBrandId = ALL_BRANDS_ID;
-
-    this.initialize();
   }
 
   private handleBrandChange = (_event: Event, brandId: string, { title: brandTitle }: Option) => {
@@ -102,8 +101,18 @@ class App {
 
   public initialize = (): void => {
     const container = document.createElement('div');
-    container.className = 'container my-5';
-    container.append(this.brandSelect.htmlElement, this.carTable.htmlElement);
+    const addFormContainer = document.createElement('div');
+    addFormContainer.className = 'd-flex justify-content-center gap-4 align-items-start';
+
+    const carForm = new CarForm();
+
+    addFormContainer.append(
+        this.carTable.htmlElement,
+        carForm.htmlElement,
+    );
+
+    container.className = 'container my-5 d-flex flex-column gap-4';
+    container.append(this.brandSelect.htmlElement, addFormContainer);
 
     this.htmlElement.append(container);
   };

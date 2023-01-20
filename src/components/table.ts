@@ -43,7 +43,7 @@ class Table<T extends TableRowData> {
             .join('');
         this.thead.innerHTML = `
             <tr class="text-center h3">
-                <th colspan="${columnsNames.length}">${this.props.title}</th>
+                <th colspan="${columnsNames.length + 1}">${this.props.title}</th>
             </tr>
             <tr>${columnsHtmlStr}</tr>
           `;
